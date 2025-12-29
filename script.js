@@ -25,19 +25,87 @@ const resultBox = document.getElementById("result");
 const progressBar = document.getElementById("progressBar");
 const answeredMeta = document.getElementById("answeredMeta");
 const timeMeta = document.getElementById("timeMeta");
+const startOverlay = document.getElementById("startOverlay");
+const startBtn = document.getElementById("startBtn");
+const againBtn = document.getElementById("againBtn");
 
 const QNAMES = Object.keys(KEY);
 let gradedOnce = false;
 
-// --- timer (nice touch) ---
-let start = Date.now();
-setInterval(() => {
-  const ms = Date.now() - start;
+// --- Start/Lock + Timer ---
+let hasStartedOnce = false;
+let timerRAF = null;
+let timerStart = 0;
+let elapsedMs = 0;
+let timerRunning = false;
+
+function fmt(ms){
   const s = Math.floor(ms / 1000);
   const mm = String(Math.floor(s / 60)).padStart(2, "0");
   const ss = String(s % 60).padStart(2, "0");
-  timeMeta.textContent = `${mm}:${ss}`;
-}, 250);
+  return `${mm}:${ss}`;
+}
+
+function tickTimer(){
+  if (!timerRunning) return;
+  const ms = Date.now() - timerStart;
+  timeMeta.textContent = fmt(ms);
+  timerRAF = requestAnimationFrame(tickTimer);
+}
+
+function startTimer(){
+  elapsedMs = 0;
+  timerStart = Date.now();
+  timerRunning = true;
+  timeMeta.textContent = "00:00";
+  if (timerRAF) cancelAnimationFrame(timerRAF);
+  timerRAF = requestAnimationFrame(tickTimer);
+}
+
+function stopTimer(){
+  if (!timerRunning) return elapsedMs;
+  elapsedMs = Date.now() - timerStart;
+  timerRunning = false;
+  if (timerRAF) cancelAnimationFrame(timerRAF);
+  timerRAF = null;
+  timeMeta.textContent = fmt(elapsedMs);
+  return elapsedMs;
+}
+
+function unlockQuiz({startNow}){
+  document.body.classList.remove("is-locked");
+  startOverlay.hidden = true;
+  if (startNow) startTimer();
+}
+
+function resetAll({showOverlay = false, restartTimer = false} = {}){
+  quizForm.reset();
+  for (const q of QNAMES) clearMarks(q);
+  gradedOnce = false;
+  hideResult();
+  updateProgress();
+  againBtn.hidden = true;
+
+  stopTimer();
+  timeMeta.textContent = "00:00";
+
+  if (showOverlay) {
+    document.body.classList.add("is-locked");
+    startOverlay.hidden = false;
+  }
+  if (restartTimer) {
+    startTimer();
+  }
+}
+
+// Initial state: locked until "Los"
+timeMeta.textContent = "00:00";
+startOverlay.hidden = false;
+document.body.classList.add("is-locked");
+startBtn.addEventListener("click", () => {
+  hasStartedOnce = true;
+  unlockQuiz({ startNow: true });
+});
 
 // --- progress ---
 function updateProgress() {
@@ -123,22 +191,31 @@ gradeBtn.addEventListener("click", () => {
   }
 
   gradedOnce = true;
+  const usedMs = stopTimer();
+  const used = fmt(usedMs);
+  againBtn.hidden = false;
 
   if (score === QNAMES.length) {
-    showResult(`✅ ${score}/3 richtig – stark!`, "ok");
+    showResult(`✅ ${score}/3 richtig – stark!  (Zeit: ${used})`, "ok");
     confettiBurst();
   } else {
-    showResult(`➡️ ${score}/3 richtig. Schau dir die markierten Stellen an und versuch’s nochmal!`, "info");
+    showResult(`➡️ ${score}/3 richtig. (Zeit: ${used})  Schau dir die markierten Stellen an und versuch’s nochmal!`, "info");
   }
 });
 
 resetBtn.addEventListener("click", () => {
-  quizForm.reset();
-  for (const q of QNAMES) clearMarks(q);
-  gradedOnce = false;
-  hideResult();
-  updateProgress();
-  start = Date.now(); // reset timer
+  // „Zurücksetzen“: alles löschen + Timer stoppen (Overlay kommt NICHT wieder)
+  resetAll({ showOverlay: false, restartTimer: false });
+});
+
+againBtn.addEventListener("click", () => {
+  // „Nochmal“: alles resetten + Timer direkt neu starten (Overlay bleibt weg)
+  resetAll({ showOverlay: false, restartTimer: true });
+});
+
+againBtn.addEventListener("click", () => {
+  // „Nochmal“: alles zurücksetzen + Timer sofort neu starten (ohne Overlay)
+  resetAll({ showOverlay: false, restartTimer: true });
 });
 
 function showResult(text, tone) {
