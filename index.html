@@ -8,29 +8,19 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 
-<body class="is-locked">
+<body>
   <div class="bg">
     <div class="glow g1" aria-hidden="true"></div>
     <div class="glow g2" aria-hidden="true"></div>
     <div class="glow g3" aria-hidden="true"></div>
   </div>
 
-  <!-- Start-Overlay (Quiz + Timer starten erst nach Klick auf "Los") -->
-  <div class="start" id="startOverlay" role="dialog" aria-modal="true" aria-label="Quiz starten">
-    <div class="start__panel">
-      <div class="start__badge">Bereit?</div>
-      <h2 class="start__title">Tippe auf <span class="accent">Los</span>, um zu starten</h2>
-      <p class="start__text">Der Timer läuft erst ab jetzt – und stoppt, wenn du auf <b>Auswerten</b> klickst.</p>
-      <button type="button" class="btn btn--primary start__btn" id="startBtn">
-        <span class="btn__shine" aria-hidden="true"></span>
-        Los
-      </button>
-    </div>
-  </div>
-
   <main class="wrap">
     <header class="hero">
-      <div class="badge">Mini-Quiz • Astronomie</div>
+      <div class="topbar">
+        <img class="logo" src="image1.png" alt="Logo" />
+        <div class="badge">Mini-Quiz • Astronomie</div>
+      </div>
       <h1>Hubble-Konstante</h1>
       <p class="sub">
         3 Fragen. Sofortige Auswertung. Bitte pro Frage genau eine Antwort wählen.
@@ -147,10 +137,6 @@
 
           <button type="button" class="btn btn--ghost" id="resetBtn">
             Zurücksetzen
-          </button>
-
-          <button type="button" class="btn btn--ghost" id="againBtn" hidden>
-            Nochmal
           </button>
         </div>
 
