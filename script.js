@@ -173,7 +173,7 @@ gradeBtn.addEventListener("click", () => {
     }
   }
   if (!allAnswered) {
-    showResult("⚠️ Bitte beantworte alle Fragen, dann erneut auf „Auswerten“ klicken.", "warn");
+    showResult("⚠️ Beantworte erst alle Fragen, dann auf „Auswerten“ klicken.", "warn");
     return;
   }
 
@@ -196,10 +196,11 @@ gradeBtn.addEventListener("click", () => {
   againBtn.hidden = false;
 
   if (score === QNAMES.length) {
-    showResult(`✅ ${score}/3 richtig – stark!  (Zeit: ${used})`, "ok");
-    confettiBurst();
+    showResult(`✅ ${score}/3 richtig – sehr gut!  (Zeit: ${used})`, "ok");
+    // confettiBurst();
+    confettiRain(1400);
   } else {
-    showResult(`➡️ ${score}/3 richtig. (Zeit: ${used})  Schau dir die markierten Stellen an und versuch’s nochmal!`, "info");
+    showResult(`➡️ ${score}/3 richtig. (Zeit: ${used})  Schau dir die markierten Stellen erneut an versuche es nochmal.`, "info");
   }
 });
 
@@ -241,68 +242,192 @@ function hideResult() {
   resultBox.textContent = "";
 }
 
-// --- Tiny confetti (no libraries) ---
+// // --- Tiny confetti (no libraries) ---
+// const canvas = document.getElementById("confetti");
+// const ctx = canvas.getContext("2d");
+// let confetti = [];
+// let confettiRAF = null;
+
+// function resizeCanvas() {
+//   canvas.width = window.innerWidth * devicePixelRatio;
+//   canvas.height = window.innerHeight * devicePixelRatio;
+//   ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+// }
+// window.addEventListener("resize", resizeCanvas);
+// resizeCanvas();
+
+// function confettiBurst() {
+//   const w = window.innerWidth, h = window.innerHeight;
+//   const originX = w / 2, originY = Math.min(220, h * 0.25);
+
+//   confetti = [];
+//   const count = 120;
+//   for (let i = 0; i < count; i++) {
+//     const angle = (Math.random() * Math.PI) - (Math.PI / 2);
+//     const speed = 6 + Math.random() * 6;
+//     confetti.push({
+//       x: originX,
+//       y: originY,
+//       vx: Math.cos(angle) * speed + (Math.random() - 0.5) * 2,
+//       vy: Math.sin(angle) * speed - Math.random() * 4,
+//       g: 0.16 + Math.random() * 0.06,
+//       r: 2 + Math.random() * 3,
+//       a: 1,
+//       rot: Math.random() * Math.PI,
+//       vr: (Math.random() - 0.5) * 0.2,
+//       hue: 220 + Math.random() * 140
+//     });
+//   }
+//   if (confettiRAF) cancelAnimationFrame(confettiRAF);
+//   tickConfetti();
+// }
+
+// function tickConfetti() {
+//   ctx.clearRect(0, 0, canvas.width, canvas.height);
+//   let alive = 0;
+
+//   for (const p of confetti) {
+//     p.vy += p.g;
+//     p.x += p.vx;
+//     p.y += p.vy;
+//     p.rot += p.vr;
+//     p.a *= 0.992;
+
+//     if (p.y < window.innerHeight + 80 && p.a > 0.05) alive++;
+
+//     ctx.save();
+//     ctx.globalAlpha = Math.max(0, Math.min(1, p.a));
+//     ctx.translate(p.x, p.y);
+//     ctx.rotate(p.rot);
+//     ctx.fillStyle = `hsl(${p.hue} 90% 60%)`;
+//     ctx.fillRect(-p.r, -p.r, p.r * 2.2, p.r * 1.4);
+//     ctx.restore();
+//   }
+
+//   if (alive > 0) confettiRAF = requestAnimationFrame(tickConfetti);
+//   else ctx.clearRect(0, 0, canvas.width, canvas.height);
+// }
+
+function hexToHsl(hex) {
+  hex = hex.replace('#', '');
+  const r = parseInt(hex.substring(0,2),16)/255;
+  const g = parseInt(hex.substring(2,4),16)/255;
+  const b = parseInt(hex.substring(4,6),16)/255;
+
+  const max = Math.max(r,g,b), min = Math.min(r,g,b);
+  let h, s, l = (max + min) / 2;
+
+  if (max === min) {
+    h = s = 0;
+  } else {
+    const d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    switch (max) {
+      case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+      case g: h = (b - r) / d + 2; break;
+      case b: h = (r - g) / d + 4; break;
+    }
+    h *= 60;
+  }
+  return { h, s: s * 100, l: l * 100 };
+}
+
+const BASE_COLORS = [
+  hexToHsl("#6d4bff"),
+  hexToHsl("#00d0ff"),
+  hexToHsl("#22c55e")
+];
+
+function randomBrandColor() {
+  const base = BASE_COLORS[(Math.random() * BASE_COLORS.length) | 0];
+  const hueJitter = (Math.random() - 0.5) * 20; // ±10°
+  return {
+    h: (base.h + hueJitter + 360) % 360,
+    s: base.s,
+    l: base.l
+  };
+}
+
 const canvas = document.getElementById("confetti");
-const ctx = canvas.getContext("2d");
+const ctx = canvas.getContext("2d", { alpha: true });
+
 let confetti = [];
 let confettiRAF = null;
 
 function resizeCanvas() {
-  canvas.width = window.innerWidth * devicePixelRatio;
-  canvas.height = window.innerHeight * devicePixelRatio;
-  ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  canvas.width  = Math.floor(window.innerWidth * dpr);
+  canvas.height = Math.floor(window.innerHeight * dpr);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
-window.addEventListener("resize", resizeCanvas);
+
+window.addEventListener("resize", resizeCanvas, { passive: true });
 resizeCanvas();
 
-function confettiBurst() {
-  const w = window.innerWidth, h = window.innerHeight;
-  const originX = w / 2, originY = Math.min(220, h * 0.25);
+function spawnRainPiece(x) {
+  const c = randomBrandColor();
+
+  return {
+    x,
+    y: -20 - Math.random() * 80,
+    vx: (Math.random() - 0.5) * 1.2,
+    vy: 2.5 + Math.random() * 3.5,
+    g: 0.03 + Math.random() * 0.05,
+    r: 2 + Math.random() * 3.5,
+    a: 0.9,
+    rot: Math.random() * Math.PI,
+    vr: (Math.random() - 0.5) * 0.25,
+    h: c.h,
+    s: c.s,
+    l: c.l
+  };
+}
+
+// öffentlich nutzbar
+window.confettiRain = function (durationMs = 1200) {
+  const start = performance.now();
+  const w = window.innerWidth;
+
+  const isMobile = window.matchMedia("(max-width: 600px)").matches;
+  const ratePerFrame = isMobile ? 6 : 10;
 
   confetti = [];
-  const count = 120;
-  for (let i = 0; i < count; i++) {
-    const angle = (Math.random() * Math.PI) - (Math.PI / 2);
-    const speed = 6 + Math.random() * 6;
-    confetti.push({
-      x: originX,
-      y: originY,
-      vx: Math.cos(angle) * speed + (Math.random() - 0.5) * 2,
-      vy: Math.sin(angle) * speed - Math.random() * 4,
-      g: 0.16 + Math.random() * 0.06,
-      r: 2 + Math.random() * 3,
-      a: 1,
-      rot: Math.random() * Math.PI,
-      vr: (Math.random() - 0.5) * 0.2,
-      hue: 220 + Math.random() * 140
-    });
-  }
   if (confettiRAF) cancelAnimationFrame(confettiRAF);
-  tickConfetti();
-}
 
-function tickConfetti() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  let alive = 0;
+  function tick(now) {
+    ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
 
-  for (const p of confetti) {
-    p.vy += p.g;
-    p.x += p.vx;
-    p.y += p.vy;
-    p.rot += p.vr;
-    p.a *= 0.992;
+    if (now - start < durationMs) {
+      for (let i = 0; i < ratePerFrame; i++) {
+        confetti.push(spawnRainPiece(Math.random() * w));
+      }
+    }
 
-    if (p.y < window.innerHeight + 80 && p.a > 0.05) alive++;
+    let alive = 0;
+    for (const p of confetti) {
+      p.vy += p.g;
+      p.x += p.vx;
+      p.y += p.vy;
+      p.rot += p.vr;
 
-    ctx.save();
-    ctx.globalAlpha = Math.max(0, Math.min(1, p.a));
-    ctx.translate(p.x, p.y);
-    ctx.rotate(p.rot);
-    ctx.fillStyle = `hsl(${p.hue} 90% 60%)`;
-    ctx.fillRect(-p.r, -p.r, p.r * 2.2, p.r * 1.4);
-    ctx.restore();
+      if (p.y > window.innerHeight * 0.6) p.a *= 0.992;
+      if (p.y < window.innerHeight + 80 && p.a > 0.05) alive++;
+
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, Math.min(1, p.a));
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot);
+      ctx.fillStyle = `hsl(${p.h} ${p.s}% ${p.l}%)`;
+      ctx.fillRect(-p.r, -p.r, p.r * 2.2, p.r * 1.4);
+      ctx.restore();
+    }
+
+    if (alive > 0 || now - start < durationMs) {
+      confettiRAF = requestAnimationFrame(tick);
+    } else {
+      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+    }
   }
 
-  if (alive > 0) confettiRAF = requestAnimationFrame(tickConfetti);
-  else ctx.clearRect(0, 0, canvas.width, canvas.height);
-}
+  confettiRAF = requestAnimationFrame(tick);
+};

@@ -316,11 +316,20 @@ body.is-locked .wrap, body.is-locked .wrap *{
 }
 
 /* confetti canvas */
-#confetti{
+/* #confetti{
   position:fixed; inset:0;
   pointer-events:none;
   z-index:2;
-}
+} */
+
+#confetti{
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 9999;
+  }
 
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce){
