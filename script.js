@@ -21,7 +21,7 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 // Unsichtbar anmelden
-signInAnonymously(auth).catch(console.error);
+await signInAnonymously(auth).catch(console.error);
 // =================================================
 
 
@@ -54,7 +54,7 @@ const answeredMeta = document.getElementById("answeredMeta");
 const timeMeta = document.getElementById("timeMeta");
 const startOverlay = document.getElementById("startOverlay");
 const startBtn = document.getElementById("startBtn");
-const againBtn = document.getElementById("againBtn");
+// const againBtn = document.getElementById("againBtn");
 const nameInput = document.getElementById("nameInput");
 const nameHint = document.getElementById("nameHint");
 
@@ -126,7 +126,7 @@ function resetAll({showOverlay = false, restartTimer = false} = {}){
   gradedOnce = false;
   hideResult();
   updateProgress();
-  againBtn.hidden = true;
+  // againBtn.hidden = true;
 
   stopTimer();
   timeMeta.textContent = "00:00";
@@ -272,7 +272,7 @@ gradeBtn.addEventListener("click", async () => {
   gradedOnce = true;
   const usedMs = stopTimer();
   const used = fmt(usedMs);
-  againBtn.hidden = false;
+  // againBtn.hidden = false;
 
   if (score === QNAMES.length) {
     showResult(`✅ ${score}/3 richtig – sehr gut!  (Zeit: ${used})`, "ok");
