@@ -32,7 +32,8 @@ body{
   transform: translate3d(0,0,0);
   animation: float 10s var(--ease) infinite;
 }
-.g1{left:-120px; top:-150px; background:#6d4bff}
+/* .g1{left:-120px; top:-150px; background:#6d4bff} */
+.g1{left:-120px; top:-150px; background:#ff9f4b} /* changed to orange, was purple once */
 .g2{right:-200px; top:120px; background:#00d0ff; animation-delay:-2.5s}
 .g3{left:20%; bottom:-240px; background:#22c55e; animation-delay:-5s}
 @keyframes float{
@@ -82,7 +83,7 @@ h1{
 .progress__bar{
   height:100%;
   border-radius: 999px;
-  background: linear-gradient(90deg, #7c3aed, #06b6d4, #22c55e);
+  background: linear-gradient(90deg, #ff9f4b, #06b6d4, #22c55e); /* orange was purple once (look above) */
   width:0%;
   transition: width .45s var(--ease);
   box-shadow: 0 10px 22px rgba(0,0,0,.25);

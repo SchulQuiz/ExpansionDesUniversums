@@ -4,7 +4,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="color-scheme" content="dark light" />
-  <title>Hubble-Quiz</title>
+  <title>Universum Quiz</title>
+  <link rel="icon" href="assets/imgae1.png" type="image/x-icon"/>
   <link rel="stylesheet" href="style.css" />
 </head>
 
@@ -18,9 +19,9 @@
   <!-- Start-Overlay (Quiz + Timer starten erst nach Klick auf "Los") -->
   <div class="start" id="startOverlay" role="dialog" aria-modal="true" aria-label="Quiz starten">
     <div class="start__panel">
-      <div class="start__badge">Bereit?</div>
+      <!-- <div class="start__badge">Bereit?</div> -->
       <h2 class="start__title">Tippe auf <span class="accent">Los</span>, um zu starten</h2>
-      <p class="start__text">Der Timer läuft erst ab jetzt – und stoppt, wenn du auf <b>Auswerten</b> klickst.</p>
+      <p class="start__text">Der Timer endet, wenn du auf Auswerten klickst.</p>
       <button type="button" class="btn btn--primary start__btn" id="startBtn">
         <span class="btn__shine" aria-hidden="true"></span>
         Los
@@ -30,10 +31,10 @@
 
   <main class="wrap">
     <header class="hero">
-      <div class="badge">Mini-Quiz • Astronomie</div>
-      <h1>Hubble-Konstante</h1>
+      <!-- <div class="badge">Mini-Quiz • Astronomie</div> -->
+      <h1>5. Die Expansion des Universums</h1>
       <p class="sub">
-        3 Fragen. Sofortige Auswertung. Bitte pro Frage genau eine Antwort wählen.
+        7 Fragen, pro Frage ist genau eine Antwort richtig.
       </p>
 
       <div class="progress" aria-label="Fortschritt">
@@ -52,7 +53,7 @@
         <!-- Q1 -->
         <article class="q" data-q="q1">
           <div class="q__top">
-            <h2>1) Was beschreibt die Hubble-Konstante \(H_0\) am besten?</h2>
+            <h2>1) Was beschreibt die Hubble-Konstante H0 am besten?</h2>
             <div class="pill" id="pill-q1">offen</div>
           </div>
 
@@ -149,24 +150,24 @@
             Zurücksetzen
           </button>
 
-          <button type="button" class="btn btn--ghost" id="againBtn" hidden>
+          <!-- <button type="button" class="btn btn--ghost" id="againBtn" hidden>
             Nochmal
-          </button>
+          </button> -->
         </div>
 
         <div class="result" id="result" aria-live="polite"></div>
 
-        <details class="hint">
-          <summary>Mini-Hinweis</summary>
+        <!-- <details class="hint">
+          <summary> Mini-Hinweis</summary>
           <p>
-            Tipp: In einem Hubble-Diagramm entspricht die <b>Steigung</b> der Ausgleichsgeraden ungefähr \(H_0\).
+            Tipp: In einem Hubble-Diagramm entspricht die <b>Steigung</b> der Ausgleichsgeraden ungefähr H0.
           </p>
-        </details>
+        </details> -->
       </form>
     </section>
 
     <footer class="foot">
-      <span>© SchulQuiz • GitHub Pages</span>
+      <span>© SchulQuiz</span>
     </footer>
   </main>
 
